@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
+            crossorigin="anonymous">
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+            crossorigin="anonymous"></script>
+        <title>Empleados</title>
+
+    </head>
+    <body>
+        <div class="container">
+            <br/>
+                <div class="row">
+
+                <!-- Modal trigger button -->
+              
+                
+                <!-- Modal Body -->
+                <!-- if you want to close by clicking outside the modal, delete the last endpoint:data-bs-backdrop and data-bs-keyboard -->
+                <div class="modal fade" id="modalId" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-sm" role="document">
+                        <div class="modal-content">
+                            <form action="javascript:void(0)" method="post"
+                            onsubmit=" aplicacion.Editar()">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalTitleId">Editar</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                  <label for="" class="form-label">ID</label>
+                                  <input type="text"
+                                    class="form-control" name="idEditar" id="idEditar" aria-describedby="helpId" placeholder="ID">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="" class="form-label">Nombre</label>
+                                    <input type="text"
+                                        class="form-control" name="nombreeditar"
+                                        id="nombreeditar"
+                                        aria-describedby="helpId"
+                                        placeholder="nombre empleado">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="correo" class="form-label">Correo:</label>
+                                    <input type="email" class="form-control"
+                                        name="correoeditar" id="correoeditar"
+                                        aria-describedby="emailHelpId"
+                                        placeholder="Correo del empleado">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">cerrar</button>
+                                <button type="submit" class="btn btn-success" onclick="aplicacion.Actualizar()">Actualizar</button>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+                
+            
+                    <div class="col-md-5">
+                        <div class="card">
+                            <div class="card-header">
+                                Empleados
+                            </div>
+
+                            <div class="card-body">
+                                <form action="javascript:void(0)" method="post"
+                                    onsubmit=" aplicacion.Agregar()">
+                                    <div class="mb-3">
+                                        <label for="" class="form-label">Nombre</label>
+                                        <input type="text"
+                                            class="form-control" name="nombre"
+                                            id="nombre"
+                                            aria-describedby="helpId"
+                                            placeholder="Nombre del empleado">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="correo" class="form-label">Correo:</label>
+                                        <input type="email" class="form-control"
+                                            name="correo" id="correo"
+                                            aria-describedby="emailHelpId"
+                                            placeholder="Correo del empleado">
+                                    </div>
+
+                                    <button type="submit" class="btn
+                                        btn-success">Agregar</button>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-md-7">
+                        <table class="table ">
+                            <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">correo</th>
+                                    <th scope="col">acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="empleados">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <script>
+                    
+                var url = "http://localhost/empleados/";
+                var modal = new bootstrap.Modal(document.getElementById("modalId"),{keyboar:false});
+                var aplicacion = new function(){
+               
+               this.empleados =document.getElementById("empleados");
+               this.nombre = document.getElementById("nombre");
+               this.correo = document.getElementById("correo");
+
+               this.idEditar = document.getElementById("idEditar");
+               this.nombreeditar = document.getElementById("nombreeditar");
+               this.correoeditar = document.getElementById("correoeditar");
+            
+
+               this.Leer = function(){
+
+                var datos = "";
+                // cuando se hace la solicitud fetch se utiliza el catch() 
+                fetch(url) // con el fetch hace una solicitud directamente a la url, luego esta esolicitud se va a hacer directamente con lo que es el JSON en la linea 85
+                .then(r=>r.json()) // se hace una r es r=>json con esto le estamos diciendo que toda la infomacion la vamos a manejar en formato json
+                .then((respuesta)=>{ // recepcion esta respuesta nos devuelve una informacion aca se resepcion la respueta de la peticion a la url en el formato json vamos a resepcionar lo que es la respueesta
+
+                    console.log(respuesta);
+
+                  respuesta.map(
+                  function(empleado, index, array){
+                    datos += "<tr>";
+                        datos += "<td> " + empleado.id+"</td>";
+                        datos += "<td> " + empleado.nombre+"</td>";
+                        datos += "<td> " + empleado.correo+"</td>";
+                        datos += '<td><div class="btn-group" role="group" aria-label="Button group name"><button type="button" class="btn btn-info" onclick="aplicacion.Editar('+empleado.id+')">Editar</button><button type="button" class="btn btn-danger" onclick="aplicacion.Borrar('+empleado.id+')">Borrar</button></div> </td>';
+                        datos += "</tr>";
+                  }
+                  );
+
+                  return this.empleados.innerHTML=datos;
+                })
+                .catch(console.log);
+
+                //var datos = " <tr><td>Ronal</td> <td>Ronal</td><td>ramirezrona@gmail.com</td> <td>editar | borrar</td></tr>";  
+           
+               };
+
+               this.Agregar = function(){
+                console.log(nombre.value);
+                console.log(correo.value);
+                
+                var datosEnviar = {nombre: this.nombre.value, correo: this.correo.value};
+                fetch(url+"?insertar=1", {method:"POST", body:JSON.stringify(datosEnviar)})
+                .then(respuesta=>respuesta.json())
+                .then((datosRespuesta)=>{
+                        console.log("Insertados");
+                        this.Leer();
+                })
+                .catch(console.log);
+               };
+
+               this.Borrar = function(id){
+                console.log(id);
+
+                fetch(url+"?borrar="+id)
+                .then(respuesta=>respuesta.json())
+                .then((datosRespuesta)=>{
+                        this.Leer();
+                })
+                .catch(console.log);
+
+               };
+
+               this.Editar = function(id){
+                console.log(id);
+                
+                modal.show();
+                datosEnviar = {id: this.idEditar, nombre: this.nombreeditar.value, correoeditar: this.correo.value};
+                fetch(url+"?consultar="+id)
+                .then(rs=>rs.json())
+                .then((datosDeRespuesta)=>{
+
+                    console.log(datosDeRespuesta );
+
+                        this.nombreeditar.value = datosDeRespuesta[0]['nombre'];
+                        this.idEditar.value = datosDeRespuesta[0]['id'];
+                        this.correoeditar.value = datosDeRespuesta[0]['correo'];
+                })
+                .catch(console.log);
+               };
+               this.Actualizar = function(){
+
+                var datosEnviar = {id:this.idEditar.value, nombre: this.nombreeditar.value, correo: this.correoeditar.value};
+                fetch(url+"?actualizar=1", {method:"POST", body:JSON.stringify(datosEnviar)})
+                .then(respuesta=>respuesta.json())
+                .then((datosRespuesta)=>{
+                    console.log(["Actualizado"]);
+                        this.Leer();
+                        modal.hide();
+                })
+                .catch(console.log);    
+              
+               }
+               }
+               
+
+        aplicacion.Leer(); 
+        
+        </script>
+            </body>
+        </html>
